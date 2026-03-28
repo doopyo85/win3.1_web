@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Windows 3.1 Program Manager</title>
+    <style>
+        body {
+            background-color: #c0c0c0; /* 클래식 회색 바탕 */
+            font-family: 'MS Sans Serif', 'Malgun Gothic', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* 윈도우 3.1 창 공통 스타일 */
+        .win-window {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid #000000;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            min-width: 250px;
+        }
+
+        /* 타이틀 바 (파란색) */
+        .win-titlebar {
+            background: #0000a8;
+            color: #ffffff;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* 타이틀 바 버튼 (제어 상자, 최소화/최대화) */
+        .win-btn {
+            background: #c0c0c0;
+            border: 1px solid #000;
+            box-shadow: inset -1px -1px #000, inset 1px 1px #fff;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: black;
+            font-family: sans-serif;
+        }
+        .win-btn:active { box-shadow: inset 1px 1px #000; }
+
+        .win-menubar {
+            background: #ffffff;
+            border-bottom: 1px solid #000;
+            padding: 2px 5px;
+            font-size: 13px;
+        }
+        .win-menubar span { margin-right: 15px; cursor: pointer; }
+        .win-menubar span::first-letter { text-decoration: underline; }
+
+        .win-content { flex-grow: 1; background: #ffffff; position: relative; display: flex; }
+        
+        /* iframe 스타일 (외부 html을 불러오는 영역) */
+        .app-iframe { width: 100%; height: 100%; border: none; }
+
+        /* 프로그램 관리자 내부 스타일 */
+        #program-manager { width: 550px; height: 350px; top: 50px; left: 50px; z-index: 1; }
+        .pm-inner-window { border: 2px solid #000; margin: 2px; flex-grow: 1; display: flex; flex-direction: column; }
+        .pm-inner-titlebar { background: #0000a8; color: white; padding: 1px 4px; font-size: 12px; font-weight: bold; }
+        
+        .icon-grid { display: flex; padding: 15px; gap: 30px; flex-wrap: wrap; align-content: flex-start; }
+        .icon { width: 60px; text-align: center; cursor: pointer; }
+        .icon-img { font-size: 32px; margin-bottom: 5px; }
+        .icon-text { font-size: 12px; padding: 1px 3px; }
+        .icon:active .icon-text { background: #0000a8; color: white; }
+    </style>
+</head>
+<body>
+
+    <div id="program-manager" class="win-window">
+        <div class="win-titlebar" id="pm-titlebar">
+            <div class="win-btn" style="margin-right: 5px;">-</div>
+            <span style="flex-grow: 1; text-align: center;">Program Manager</span>
+            <div style="display: flex; gap: 2px;">
+                <div class="win-btn">▼</div>
+                <div class="win-btn">▲</div>
+            </div>
+        </div>
+        <div class="win-menubar">
+            <span>File</span><span>Options</span><span>Window</span><span>Help</span>
+        </div>
+        <div class="win-content" style="padding: 2px; background: #c0c0c0;">
+            <div class="pm-inner-window">
+                <div class="pm-inner-titlebar">Main</div>
+                <div class="icon-grid">
+                    <div class="icon" ondblclick="runApp('notepad.html', 'Notepad', 400, 300)">
+                        <div class="icon-img">📝</div>
+                        <div class="icon-text">Notepad</div>
+                    </div>
+                    <div class="icon" ondblclick="runApp('solitaire.html', 'Solitaire', 500, 400)">
+                        <div class="icon-img">🃏</div>
+                        <div class="icon-text">Solitaire</div>
+                    </div>
+                    <div class="icon" ondblclick="runApp('ie.html', 'Internet Explorer', 600, 450)">
+                        <div class="icon-img">🌐</div>
+                        <div class="icon-text">Internet</div>
+                    </div>
+                    <div class="icon" ondblclick="runApp('recycle.html', 'Recycle Bin', 300, 200)">
+                        <div class="icon-img">🗑️</div>
+                        <div class="icon-text">Trash</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let zIndexCounter = 10;
+
+        // 외부 HTML을 iframe 창으로 실행하는 함수
+        function runApp(url, title, width, height) {
+            const win = document.createElement('div');
+            win.className = 'win-window';
+            win.style.width = width + 'px';
+            win.style.height = height + 'px';
+            win.style.top = (80 + (zIndexCounter * 10) % 100) + 'px';
+            win.style.left = (120 + (zIndexCounter * 10) % 100) + 'px';
+            win.style.zIndex = ++zIndexCounter;
+
+            win.innerHTML = `
+                <div class="win-titlebar" onmousedown="startDrag(event, this.parentElement)">
+                    <div class="win-btn" style="margin-right: 5px;" onclick="closeApp(this.parentElement.parentElement)">-</div>
+                    <span style="flex-grow: 1; text-align: center;">${title}</span>
+                    <div style="display: flex; gap: 2px;">
+                        <div class="win-btn">▼</div>
+                        <div class="win-btn">▲</div>
+                    </div>
+                </div>
+                <div class="win-content">
+                    <iframe class="app-iframe" src="${url}"></iframe>
+                </div>
+            `;
+            
+            win.onmousedown = () => { win.style.zIndex = ++zIndexCounter; };
+            document.body.appendChild(win);
+        }
+
+        // 창 닫기
+        function closeApp(element) {
+            element.remove();
+        }
+
+        // 창 드래그 기능
+        let isDragging = false, dragWindow = null, offsetX, offsetY;
+
+        function startDrag(e, winElement) {
+            if(e.target.classList.contains('win-btn')) return;
+            isDragging = true;
+            dragWindow = winElement;
+            dragWindow.style.zIndex = ++zIndexCounter;
+            offsetX = e.clientX - dragWindow.offsetLeft;
+            offsetY = e.clientY - dragWindow.offsetTop;
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging && dragWindow) {
+                dragWindow.style.left = (e.clientX - offsetX) + 'px';
+                dragWindow.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            dragWindow = null;
+        });
+
+        // 프로그램 관리자 드래그 적용
+        document.getElementById('pm-titlebar').onmousedown = function(e) {
+            startDrag(e, document.getElementById('program-manager'));
+        };
+    </script>
+</body>
+</html>

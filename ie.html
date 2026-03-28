@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; font-family: 'MS Sans Serif', sans-serif; background: #fff; }
+        .toolbar { background: #c0c0c0; border-bottom: 1px solid #000; padding: 5px; display: flex; font-size: 13px; align-items: center; }
+        .toolbar input { flex-grow: 1; margin-left: 5px; border: 2px solid; border-color: #000 #fff #fff #000; padding: 2px; }
+        .content { padding: 20px; flex-grow: 1; overflow-y: auto; color: #000; }
+        a { color: #0000ff; }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        Address: <input type="text" value="http://www.cosmoedu.com" readonly>
+    </div>
+    <div class="content">
+        <h1 style="border-bottom: 2px solid #000; padding-bottom: 5px;">World Wide Web</h1>
+        <p>인터넷 세상에 오신 것을 환영합니다.</p>
+        <ul>
+            <li><a href="#">새로운 소식 확인하기</a></li>
+            <li><a href="#">검색 엔진으로 이동</a></li>
+        </ul>
+    </div>
+</body>
+</html>
